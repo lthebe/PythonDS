@@ -65,8 +65,12 @@ class ReversiGameLogic:
     def _validateMove(self, row_list, column_list):
         count_current = 0
         count_opponent = 0
+        if len(row_list) == 0 or len(column_list) == 0:
+            self._currentTruthList.append(False)
+            return
         try:
             for r,c in zip(row_list, column_list):
+                print r, c
                 if self._grid[r,c] == 0:
                     self._currentTruthList.append(False)
                     return
@@ -89,19 +93,24 @@ class ReversiGameLogic:
         """Returns True or False to indicate if the cur-
         rent player can place their chip in the square at position (row, col).
         """
+        if row == 8 and col == 8: # pass is 8,8
+            self._currentPlayer = self.PLAYER_B if self._currentPlayer == \
+                self.PLAYER_A else self.PLAYER_A
+            return False
         if self.occupiedBy(row,col) is not 0:
             return False
         self._probing_range = [(range(row+1,self.NUM_ROWS), [col]*len(range(row+1,self.NUM_ROWS))),\
-                               (reversed(range(0,row)), [col]*len(range(0,row))),\
+                               (range(0,row)[::-1], [col]*len(range(0,row))),\
                                ([row]*len(range(col+1,self.NUM_COLS)),(range(col+1, self.NUM_COLS))),\
-                               ([row]*len(range(0,col)), reversed(range(0,col))),\
-                               (range(row+1, self.NUM_ROWS), reversed(range(0,col))),\
-                               (reversed(range(0, row)), range(col+1, self.NUM_ROWS)),\
-                               (reversed(range(0, row)), reversed(range(0, col))),\
+                               ([row]*len(range(0,col)), range(0,col)[::-1]),\
+                               (range(row+1, self.NUM_ROWS), range(0,col)[::-1]),\
+                               (range(0, row)[::-1], range(col+1, self.NUM_ROWS)),\
+                               (range(0, row)[::-1], range(0, col)[::-1]),\
                                (range(row+1, self.NUM_ROWS), range(col+1, self.NUM_ROWS))]
         self._currentTruthList = list()
         for (row_list, col_list) in self._probing_range:
             self._validateMove(row_list, col_list)
+        print self._currentTruthList, "<- truth list in isLegalMove method"
         if True in self._currentTruthList:
             return True
         else:
@@ -119,16 +128,9 @@ class ReversiGameLogic:
         flipped based on the rules of Reversi are flipped."""
 
         if self.isLegalMove(row,col):
-            self._probing_range = [(range(row+1,self.NUM_ROWS), [col]*len(range(row+1,self.NUM_ROWS))),\
-                                   (reversed(range(0,row)), [col]*len(range(0,row))),\
-                                   ([row]*len(range(col+1,self.NUM_COLS)),(range(col+1, self.NUM_COLS))),\
-                                   ([row]*len(range(0,col)), reversed(range(0,col))),\
-                                   (range(row+1, self.NUM_ROWS), reversed(range(0,col))),\
-                                   (reversed(range(0, row)), range(col+1, self.NUM_ROWS)),\
-                                   (reversed(range(0, row)), reversed(range(0, col))),\
-                                   (range(row+1, self.NUM_ROWS), range(col+1, self.NUM_ROWS))]
             self._grid[row,col] = self._currentPlayer
             probing_now = 0
+            print self._currentTruthList, "<-truth list in makemove method"
             for truthValue in self._currentTruthList:
                 probing_now += 1
                 if truthValue:

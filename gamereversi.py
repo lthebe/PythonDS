@@ -9,7 +9,8 @@ def main():
         canInput = True
         while canInput:
             #plays until someone wins
-            move_coordinate = raw_input("Input (row,col) for %d or 'pass'   >"\
+            move_coordinate = raw_input\
+                ("Input (row,col) for player %d or (8,8) to pass   > "\
                                         %game.whoseTurn())
             #IF no legal move at all for a player, the optiion should be pass
             #but it is not implemented as ReversiGameLogic ADT needs some change
