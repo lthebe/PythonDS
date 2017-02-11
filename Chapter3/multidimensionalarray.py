@@ -21,7 +21,7 @@ class MultiArray:
 
     #returns the lenth of the given dimension
     def length(self, dim):
-        assert dim >= 1 and dim < len(self._dims),\
+        assert dim >= 1 and dim <= len(self._dims),\
                "Dimension component out of range"
         return self._dims[dim-1]
 
@@ -53,7 +53,6 @@ class MultiArray:
                 return None
             else:
                 offset += idx[j] * self._factors[j]
-                print offset, idx[j], self._factors[j]
         return offset
 
     #computes the factor values used in the index equation
@@ -62,4 +61,3 @@ class MultiArray:
         self._factors[len(self._factors)-1] = 1
         for j in reversed(range(len(self._factors) - 1)):
             self._factors[j] = self._factors[j+1] * self._dims[j+1]
-            print self._factors[j]

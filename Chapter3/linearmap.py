@@ -1,4 +1,10 @@
-#Map ADT with list
+# menu-driven program that uses your function from the previous ques-
+tion to extract the sales data and can produce any of the following reports:
+    (a) Each of the four types of reports described in the chapter.
+    (b) The sales for a single store similar to that shown in Section 3.4 with the
+    data sorted by total sales.
+    (c) The total sales for each store sorted by total sales from largest to smallest.
+    (d) The total sales for each item sorted by item number.Map ADT with list
 class Map:
     def __init__(self):
         self._entryList = list()#empty list initialization
