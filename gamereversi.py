@@ -23,9 +23,16 @@ def main():
 
 
 def draw(game):
+    print ("r/c", end = ' ')
+    for a in range(8):
+        print (a, sep = '   ', end = '   ')
+
+    print ('\n')
     for r in range(8):
+        print (r, sep = '   ', end = '   ')
         for c in range(8):
             print(game.occupiedBy(r,c), sep = '   ', end = '   ')
+
         print('\n---------------------------------')
 
 main()

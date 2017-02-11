@@ -67,12 +67,14 @@ class ReversiGameLogic:
         count_opponent = 0
         if len(row_list) == 0 or len(column_list) == 0:
             self._currentTruthList.append(False)
+            #print "False as row len or col len 0"
             return
         try:
             for r,c in zip(row_list, column_list):
-                print r, c
-                if self._grid[r,c] == 0:
+                #print r, c, self._grid[r,c]
+                if self._grid[r,c] == 0:#the next cell could not be empty
                     self._currentTruthList.append(False)
+                    #print ("False as next cell contains 0")
                     return
                 if self._grid[r,c] == self._currentPlayer:
                     count_current += 1
@@ -81,13 +83,23 @@ class ReversiGameLogic:
                 if count_current == 1:
                     if count_opponent == 0:
                         self._currentTruthList.append(False)
+                        #print ("False as the next cell is occupied by same player")
                         return
                     else:
                         self._currentTruthList.append(True)
+                        #print ("Last player is same player to form attack line, true")
                         return
-        except AssertionError:
+            #loop completes, count current is still 0
+            #print ("Loop completes, but no current player to complete attack")
             self._currentTruthList.append(False)
             return
+        except AssertionError:#assertionerror to keep search within 0<=r,c<=7
+            if count_opponent > 0 and current_count == 1:
+                self._currentTruthList.append(True)
+                return
+            else:
+                self._currentTruthList.append(False)
+                return
 
     def isLegalMove(self,row, col):
         """Returns True or False to indicate if the cur-
@@ -99,6 +111,14 @@ class ReversiGameLogic:
             return False
         if self.occupiedBy(row,col) is not 0:
             return False
+        #first - search by moving from the cell towards the vertical lower side
+        #second - search by moving from the cell towards the vertical upper side
+        #third - search  by moving from the cell towards horizontal right side
+        #fourth - search by moving from the cell towards horizontal left side
+        #fifth - search by moving from the cell towards lower left corner
+        #sixth - search by moving from the cell towards upper right corner
+        #seventh - search by moving from the cell towards upper left corener
+        #eighth - search by moving from the cell towards lower right corner
         self._probing_range = [(range(row+1,self.NUM_ROWS), [col]*len(range(row+1,self.NUM_ROWS))),\
                                (range(0,row)[::-1], [col]*len(range(0,row))),\
                                ([row]*len(range(col+1,self.NUM_COLS)),(range(col+1, self.NUM_COLS))),\
@@ -110,8 +130,8 @@ class ReversiGameLogic:
         self._currentTruthList = list()
         for (row_list, col_list) in self._probing_range:
             self._validateMove(row_list, col_list)
-        print self._currentTruthList, "<- truth list in isLegalMove method"
-        if True in self._currentTruthList:
+        #print self._currentTruthList, "<- truth list in isLegalMove method"
+        if True in self._currentTruthList:#at least a vailid move in one direction
             return True
         else:
             return False
@@ -132,15 +152,14 @@ class ReversiGameLogic:
             probing_now = 0
             print self._currentTruthList, "<-truth list in makemove method"
             for truthValue in self._currentTruthList:
-                probing_now += 1
                 if truthValue:
-                    a, b = self._probing_range[probing_now - 1]
-                    print a, b
+                    a, b = self._probing_range[probing_now]
                     for r,c in zip(a,b):
                         if self._grid[r,c] is not self._currentPlayer:
                             self._grid[r,c] = self._currentPlayer
                         else:
                             break
+                probing_now += 1
 
             self._currentPlayer = self.PLAYER_A \
                 if self._currentPlayer == self.PLAYER_B else self.PLAYER_B
@@ -148,4 +167,4 @@ class ReversiGameLogic:
             self._openSquares -= 1
         if self._openSquares == 0:
             self._gameState = self.GAME_OVER
-            print ("Game is over")
+            print ("Game is over and winner is: %d" %self.getWinner())
