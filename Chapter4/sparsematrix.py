@@ -13,9 +13,13 @@ class SparseMatrix:
     def numCols(self):
         return self._numCols
 
-    #return the value of element (i,j):x[i,j]
+    #return the value of element (i,j):x[i,j] #implemented by me
     def __getitem__(self, ndxTuple):
-        pass
+        ndx = self._findPosition(ndxTuple[0], ndxTuple[1])
+        if ndx:
+            return self._elements[ndx].value
+        else:
+            return ndx #returns None
 
     #set the value of element i,j to the value s: x[i,j] = s
     def __setitem__(self, ndxTuple, scalar):
@@ -36,7 +40,25 @@ class SparseMatrix:
             item.value *= scalar
 
     def __add__(self, rhsMatrix):
-        pass
+        assert rhsMatrix.numRows() == self.numRows() and \
+            rhsMatrix.numCols() == self.numCols(), "Matrix should be same size\
+            for add operation!"
+        nexMatrix = SparseMatrix(self.numRows(), self.numCols()) #newmatrix of same size
+        #elements are  mutable, so the values are used to create new element and
+        #copied to the new matrix
+        for element in self._elementList:
+            dupElement = _MatrixElement(element.row, element.col, element.value)
+            newMatrix._elementList.append(dupElement)
+        #now iteratne rhsMatrix for non zero value
+        for element in rhsMatrix._elementList:
+            value = newMatrix[element.row, element.col]
+            value += element.value
+            newMatrix[element.row, element.col] = value
+        return newMatrix
+    """The above implemention is O(k^2) in worst  case where k is the numuber
+    of non zero elements in sparse matrix.  And way better than O(n^2) for
+    k << mxn - if k is nearly equal to mxn, it would be m2n2 (way worst than n2)
+    """
 
     def __sub__(self, rhsMatrix):
         pass
