@@ -2,7 +2,7 @@
 class Stack:
     def __init__(self):
         self._top = None
-        self.__size = 0
+        self._size = 0
 
     def isEmpty(self):
         return self._top is None
@@ -24,7 +24,7 @@ class Stack:
         self._top = _StackNode(item, self._top)
         self._size += 1
 
-    class _StackNode:
-        def __init__(self, item, link):
-            self.item = item
-            self.next = link
+class _StackNode:
+    def __init__(self, item, link):
+        self.item = item
+        self.next = link
