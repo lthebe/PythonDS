@@ -4,6 +4,8 @@ from maze import Maze
 #the main routine
 def main():
     maze = buildMaze("mazefile")
+    print("Maze in the beginning")
+    maze.draw()
     if maze.findPath():
         print("Path found...")
         maze.draw()
