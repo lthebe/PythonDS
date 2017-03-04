@@ -19,11 +19,13 @@ class PriorityQueue:
     def dequeue(self):
         """Looks for the entry with highest priority and dequeue"""
         assert not self.isEmpty(), "Empty queue"
-        highest = self._qList[i].priority
+        index = 0
+        highest = self._qList[index].priority
         for i in range(len(self)):
             if self._qList[i].priority < highest:
                 highest = self._qList[i].priority
-        entry = self._qList.pop(highest)
+                index = i
+        entry = self._qList.pop(index)
         return entry.item
 
     class _PriorityQEntry(object):
